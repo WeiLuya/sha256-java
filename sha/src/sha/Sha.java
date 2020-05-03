@@ -5,6 +5,8 @@ public class Sha {
 	public static void main(String args[]) {
 		int num = 4;
 		System.out.println(rightRotateInt(num, 1));
+		
+		Sha s = new Sha();
 		}
 	
 	private int[] k = {
@@ -38,7 +40,7 @@ public class Sha {
 		int[] hash = {h0, h1, h2, h3, h4, h5, h6, h7};
 		
 		String out = new String();
-		for(int i = 0; i < 8; i++) {
+		for(int i = 7; i >= 0; i++) {
 			out = out + Integer.toHexString(hash[i]);
 		}
 		System.out.println(out);
