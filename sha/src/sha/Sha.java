@@ -46,7 +46,7 @@ public class Sha {
 	}
 	
 	public Sha() {
-		byte[] a = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+		byte[] a = new byte[0];
 		
 		byte[][] newArray = pad(a);
 		
@@ -69,11 +69,16 @@ public class Sha {
 		int k = 64 - ((len + 1 + 8) % 64);
 		
 		byte[] pad = new byte[len + 1 + k + 8];
-		pad[len] = 0b1000000;
+		
+		for(int i = 0; i < len; i++) {
+			pad[i] = a[i];
+		}
+		
+		pad[len] = (byte) (0b10000000);
 	
 		long size = len * 8;
-		for(int i = 8; i > 0; i--) {
-			pad[pad.length - i] = (byte) (size >>> ((8 - i) * 8));
+		for(int i = 1; i <= 8; i++) {
+			pad[pad.length - i] = (byte) (size >>> ((i - 1) * 8));
 		}
 		
 		int blocks = pad.length / 64;
@@ -84,6 +89,14 @@ public class Sha {
 				output[i][j] = pad[(64  * i) + j];
 			}
 		}
+		
+		for(int i = 0; i < output.length; i++) {
+			for(int j = 0; j < output[i].length; j++) {
+				System.out.println(output[i][j]);
+			}
+		}
+		
+		System.out.print("\n");
 		
 		return output;
 	}
