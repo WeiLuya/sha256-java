@@ -3,10 +3,9 @@ package sha;
 public class Sha {
 	
 	public static void main(String args[]) {
-		int num = 4;
-		System.out.println(rightRotateInt(num, 1));
 		
 		Sha s = new Sha();
+		
 		}
 	
 	private int[] k = {
@@ -40,20 +39,21 @@ public class Sha {
 		int[] hash = {h0, h1, h2, h3, h4, h5, h6, h7};
 		
 		String out = new String();
-		for(int i = 7; i >= 0; i++) {
+		for(int i = 7; i >= 0; i--) {
 			out = out + Integer.toHexString(hash[i]);
 		}
 		System.out.println(out);
 	}
 	
 	public Sha() {
-		byte[] a = new byte[0];
+		byte[] a = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 		
 		byte[][] newArray = pad(a);
 		
 		for(int i = 0; i < newArray.length; i++) {
 			hash(newArray[i]);
 		}
+		
 		
 		int[] hash = {h0, h1, h2, h3, h4, h5, h6, h7};
 		
@@ -92,7 +92,7 @@ public class Sha {
 
 		int[] w = new int[64];
 		
-		for(int i = 0; i < 64; i++) {
+/*		for(int i = 0; i < 64; i++) {
 			w[i] = input[i] & 0x000000ff;
 			if((i % 4) == 1) {
 				w[i] = (w[i] << 8) & 0x0000ff00;
@@ -101,10 +101,25 @@ public class Sha {
 			} else if((i % 4) == 3) {
 				w[i] = (w[i] << 24) & 0xff000000;
 			}
+		}*/
+		
+		for(int i = 0; i < 64; i++) {
+			w[i] = input[i];
+			if((i % 4) == 0) {
+				w[i] = (w[i] << 24) & 0xff000000;
+			} else if((i % 4) == 1) {
+				w[i] = (w[i] << 16) & 0x00ff0000;
+			} else if((i % 4) == 2) {
+				w[i] = (w[i] << 8) & 0x0000ff00;
+			}
 		}
 		
 		for(int i = 0; i < 16; i++) {
 			w[i] = w[4 * i] | w[(4 * i) + 1] | w[(4 * i) + 2] | w[(4 * i) + 3];
+		}
+		
+		for(int i = 0; i < 16; i++) {
+			System.out.println(Integer.toHexString(w[i]));
 		}
 		
 		for(int i = 16; i < 64; i++) {
@@ -154,5 +169,29 @@ public class Sha {
 		int temp = (input << (32 - num));
 		int output = (input >>> num) | temp;
 		return output;
+	}
+	
+	public void test(byte[] input) {
+		int[] w = new int[64];
+		
+		for(int i = 0; i < 64; i++) {
+			w[i] = input[i];
+			if((i % 4) == 0) {
+				w[i] = (w[i] << 24) & 0xff000000;
+			} else if((i % 4) == 1) {
+				w[i] = (w[i] << 16) & 0x00ff0000;
+			} else if((i % 4) == 2) {
+				w[i] = (w[i] << 8) & 0x0000ff00;
+			}
+		}
+		
+		for(int i = 0; i < 16; i++) {
+			w[i] = w[4 * i] | w[(4 * i) + 1] | w[(4 * i) + 2] | w[(4 * i) + 3];
+		}
+		
+		for(int i = 0; i < 64; i++) {
+			System.out.print(Integer.toHexString(w[i]) + ", ");
+		}
+		System.out.println();
 	}
 }
