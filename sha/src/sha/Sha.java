@@ -7,6 +7,23 @@ public class Sha {
 	  
 	  Sha s = new Sha();
 	  
+	  byte[] output = s.shaString("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq");
+	  final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+		char[] hexChars = new char[output.length * 2];
+	    for (int j = 0; j < output.length; j++) {
+	        int v = output[j] & 0xFF;
+	        hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+	        hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+	    }
+	    
+	    String out = new String();
+	    for(int i = 0; i < hexChars.length; i++) {
+	    	out = out + hexChars[i];
+	    }
+	  
+	  System.out.println(out);
+	  
+	  
 	  }
 	 
 
@@ -53,6 +70,13 @@ public class Sha {
 		byte[] a = b.getBytes();
 
 		byte[][] newArray = pad(a);
+				
+	/*	for(int i = 0; i < newArray.length; i++) {
+			for(int j = 0; j < newArray[i].length; j++) {
+				System.out.print(newArray[i][j] + ",");
+			}
+			System.out.print("\n");
+		}*/
 
 		int[] hash = hash(newArray);
 
@@ -103,7 +127,7 @@ public class Sha {
 		int len = a.length;
 		int k = 64 - ((len + 1 + 8) % 64);
 
-		/* size must be a multiple of 512 */
+		/* size must be a multiple of 64 bytes */
 
 		byte[] pad = new byte[len + 1 + k + 8];
 
@@ -142,18 +166,19 @@ public class Sha {
 		int h7 = 0x5be0cd19;
 
 		for (int i = 0; i < input.length; i++) {
-
 			int[] w = new int[64];
 
 			/* squeeze 4 bytes into 1 int */
 			for (int j = 0; j < 64; j++) {
 				w[j] = input[i][j];
-				if ((i % 4) == 0) {
+				if ((j % 4) == 0) {
 					w[j] = (w[j] << 24) & 0xff000000;
 				} else if ((j % 4) == 1) {
 					w[j] = (w[j] << 16) & 0x00ff0000;
 				} else if ((j % 4) == 2) {
 					w[j] = (w[j] << 8) & 0x0000ff00;
+				} else if((j % 4) == 3) {
+					w[j] = (w[j] << 0) & 0x000000ff;
 				}
 			}
 

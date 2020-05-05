@@ -1,7 +1,5 @@
 package sha;
 
-import java.util.Random;
-
 public class Pbkdf {
 	Sha sha = new Sha();
 
@@ -9,13 +7,13 @@ public class Pbkdf {
 	
 	public static void main(String args[]) {
 		Pbkdf p = new Pbkdf();
-		System.out.println(p.stretch("user1234", 1, 1024, 3));
+		System.out.println(p.stretch("1234", 1, 1, 3));
 	}
 	
-	public String stretch(String password, int salt, int c, int shortNumber) {
-		
+	public String stretch(String password, int salt, int iterations, int shortNumber) {
 		if(shortNumber > 0) {
 			byte[] key = new byte[32];
+			
 			for(int i = 0; i < 4; i++) {
 				key[i] = (byte) (salt >>> (i * 8));
 				key[i + 4] = (byte) (salt >>> (i * 8));
@@ -26,35 +24,52 @@ public class Pbkdf {
 				key[i + 24] = (byte) (shortNumber >>> (i * 8));
 				key[i + 28] = (byte) (shortNumber >>> (i * 8));
 			}
-			dk = dk + f(password.getBytes(), key, c);
 			
-			return stretch(password, salt, c, shortNumber - 1);
+			dk = dk + f(password, key, iterations);
+			return stretch(password, salt, iterations, shortNumber - 1);
 		} else {
 			return dk;
 		}
 	}
 	
-	public String f(byte[] password, byte[] key, int len) {
-		
+	public String f(String password, byte[] key, int len) {
 
-		byte[] bob = new byte[32];
-		byte[] hash = sha.shaByteArray(password);
+		byte[][] bob = new byte[len][32];
+		String temp = password + new String(key);
+		
+		byte[] hash = sha.shaString(temp);
 		for(int i = 0; i < 32; i++) {
-			bob[i] = (byte) (hash[i] ^ key[i]);
+			bob[0][i] = (byte) (hash[i]);
 		}
 		
 		for(int i = 1; i < len; i++) {
-			hash = sha.shaByteArray(bob);
-			for(int j = 0; j < 32; j++) {
-				bob[j] = (byte) (hash[j] ^ bob[j]);
-			}
 			
+			temp = password + new String(bob[i - 1]);
+			
+			hash = sha.shaString(temp);
+			
+			for(int j = 0; j < 32; j++) {
+				bob[i][j] = (byte) (hash[j]);
+			}
+					
+		}
+		
+		byte[] output = new byte[32];
+		
+		for(int i = 0; i < 32; i++) {
+			output[i] = bob[0][i];
+		}
+		
+		for(int i = 0; i < bob[0].length; i++) {
+			for(int j = 1; j < bob.length; j++) {
+				output[i] = (byte) (bob[j][i] ^ bob[j - 1][i]);
+			}
 		}
 		
 		final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-		char[] hexChars = new char[bob.length * 2];
-	    for (int j = 0; j < bob.length; j++) {
-	        int v = bob[j] & 0xFF;
+		char[] hexChars = new char[output.length * 2];
+	    for (int j = 0; j < output.length; j++) {
+	        int v = output[j] & 0xFF;
 	        hexChars[j * 2] = HEX_ARRAY[v >>> 4];
 	        hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
 	    }
