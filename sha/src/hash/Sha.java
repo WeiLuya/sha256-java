@@ -1,4 +1,4 @@
-package sha;
+package hash;
 
 public class Sha {
 
@@ -70,13 +70,6 @@ public class Sha {
 		byte[] a = b.getBytes();
 
 		byte[][] newArray = pad(a);
-				
-	/*	for(int i = 0; i < newArray.length; i++) {
-			for(int j = 0; j < newArray[i].length; j++) {
-				System.out.print(newArray[i][j] + ",");
-			}
-			System.out.print("\n");
-		}*/
 
 		int[] hash = hash(newArray);
 
@@ -126,7 +119,6 @@ public class Sha {
 	public byte[][] pad(byte[] a) {
 		int len = a.length;
 		int k = 64 - ((len + 1 + 8) % 64);
-
 		/* size must be a multiple of 64 bytes */
 
 		byte[] pad = new byte[len + 1 + k + 8];
@@ -186,11 +178,6 @@ public class Sha {
 				w[j] = w[4 * j] | w[(4 * j) + 1] | w[(4 * j) + 2] | w[(4 * j) + 3];
 			}
 
-			/*
-			 * for(int i = 0; i < 16; i++) { System.out.println(Integer.toHexString(w[i]));
-			 * }
-			 */
-
 			/* fill out the rest of the array */
 			for (int j = 16; j < 64; j++) {
 				int s0 = (rightRotateInt(w[j - 15], 7)) ^ (rightRotateInt(w[j - 15], 18)) ^ (w[j - 15] >>> 3);
@@ -235,10 +222,8 @@ public class Sha {
 			h6 = h6 + g;
 			h7 = h7 + h;
 		}
-		
-		int[] output = { h0, h1, h2, h3, h4, h5, h6, h7 };
 
-		return output;
+		return new int[] {h0, h1, h2, h3, h4, h5, h6, h7};
 	}
 
 	public static int rightRotateInt(int input, int num) {

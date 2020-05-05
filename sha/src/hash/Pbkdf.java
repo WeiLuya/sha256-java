@@ -1,4 +1,4 @@
-package sha;
+package hash;
 
 public class Pbkdf {
 	Sha sha = new Sha();
