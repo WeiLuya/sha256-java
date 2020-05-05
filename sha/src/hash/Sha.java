@@ -28,14 +28,16 @@ public class Sha {
 	 
 
 	/* constants */
-	final private int[] k = { 0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+	final private int[] k = { 
+			0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
 			0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1,
 			0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d,
 			0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc,
 			0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3,
 			0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3,
 			0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb,
-			0xbef9a3f7, 0xc67178f2 };
+			0xbef9a3f7, 0xc67178f2 
+			};
 
 	/* default initial values 
 	private int h0 = 0x6a09e667;
@@ -119,7 +121,7 @@ public class Sha {
 	public byte[][] pad(byte[] a) {
 		int len = a.length;
 		int k = 64 - ((len + 1 + 8) % 64);
-		/* size must be a multiple of 64 bytes */
+		/* size must be a multiple of 64 bytes or 512 bits*/
 
 		byte[] pad = new byte[len + 1 + k + 8];
 
@@ -127,8 +129,10 @@ public class Sha {
 			pad[i] = a[i];
 		}
 
+		/*pad a single 1 bit*/
 		pad[len] = (byte) (0b10000000);
 
+		/*last 8 bytes are the length of the original message*/
 		long size = len * 8;
 		for (int i = 1; i <= 8; i++) {
 			pad[pad.length - i] = (byte) (size >>> ((i - 1) * 8));
@@ -137,6 +141,7 @@ public class Sha {
 		int blocks = pad.length / 64;
 		byte output[][] = new byte[blocks][64];
 
+		/*convert to blocks of 64 bytes, or 512 bits*/
 		for (int i = 0; i < blocks; i++) {
 			for (int j = 0; j < 64; j++) {
 				output[i][j] = pad[(64 * i) + j];
@@ -158,6 +163,7 @@ public class Sha {
 		int h7 = 0x5be0cd19;
 
 		for (int i = 0; i < input.length; i++) {
+			/*message block*/
 			int[] w = new int[64];
 
 			/* squeeze 4 bytes into 1 int */
@@ -178,14 +184,14 @@ public class Sha {
 				w[j] = w[4 * j] | w[(4 * j) + 1] | w[(4 * j) + 2] | w[(4 * j) + 3];
 			}
 
-			/* fill out the rest of the array */
+			/* fill out the rest of the message block */
 			for (int j = 16; j < 64; j++) {
 				int s0 = (rightRotateInt(w[j - 15], 7)) ^ (rightRotateInt(w[j - 15], 18)) ^ (w[j - 15] >>> 3);
 				int s1 = (rightRotateInt(w[j - 2], 17)) ^ (rightRotateInt(w[j - 2], 19)) ^ (w[j - 2] >>> 10);
 				w[j] = w[j - 16] + s0 + w[j - 7] + s1;
 			}
 
-			/* below is the actual hash function */
+			/* below is the hash function */
 			int a = h0;
 			int b = h1;
 			int c = h2;

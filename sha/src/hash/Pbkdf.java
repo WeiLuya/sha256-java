@@ -7,10 +7,14 @@ public class Pbkdf {
 	
 	public static void main(String args[]) {
 		Pbkdf p = new Pbkdf();
-		System.out.println(p.stretch("1234", 1, 1, 3));
+		System.out.println(p.stretch("1234", 1, 2, 3));
 	}
 	
 	public String stretch(String password, int salt, int iterations, int shortNumber) {
+		if(iterations <= 0) {
+			iterations = (iterations * -1) + 1;
+		}
+		
 		if(shortNumber > 0) {
 			byte[] key = new byte[32];
 			
