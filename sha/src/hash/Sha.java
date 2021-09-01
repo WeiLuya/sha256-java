@@ -8,6 +8,9 @@ public class Sha {
 	  Sha s = new Sha();
 	  
 	  byte[] output = s.shaString("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq");
+	  byte[] outputNew = s.shaString("a");
+	  
+	  /*converts char array to hex*/
 	  final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 		char[] hexChars = new char[output.length * 2];
 	    for (int j = 0; j < output.length; j++) {
@@ -16,13 +19,27 @@ public class Sha {
 	        hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
 	    }
 	    
+	    char[] hexCharsNew = new char[outputNew.length * 2];
+	    for (int j = 0; j < outputNew.length; j++) {
+	        int v = outputNew[j] & 0xFF;
+	        hexCharsNew[j * 2] = HEX_ARRAY[v >>> 4];
+	        hexCharsNew[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+	    }
+	    
+	    
 	    String out = new String();
 	    for(int i = 0; i < hexChars.length; i++) {
 	    	out = out + hexChars[i];
 	    }
-	  
+	    
+	    String outNew = new String();
+	    for(int i = 0; i < hexCharsNew.length; i++) {
+	    	outNew = outNew + hexCharsNew[i];
+	    }
+	    
 	  System.out.println(out);
 	  
+	  System.out.println(outNew);
 	  
 	  }
 	 

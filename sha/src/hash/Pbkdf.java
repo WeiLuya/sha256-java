@@ -7,12 +7,12 @@ public class Pbkdf {
 	
 	public static void main(String args[]) {
 		Pbkdf p = new Pbkdf();
-		System.out.println(p.stretch("1234", 1, 2, 3));
+		System.out.println(p.stretch("user1234", 32455, 4096, 2));
 	}
 	
 	public String stretch(String password, int salt, int iterations, int shortNumber) {
 		if(iterations <= 0) {
-			iterations = (iterations * -1) + 1;
+			iterations = 1;
 		}
 		
 		if(shortNumber > 0) {
